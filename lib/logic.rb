@@ -2,7 +2,7 @@ require_relative '../lib/initial_query'
 
 
 class Logic
-    attr_reader :longitude, :latitude, :radius, :query
+    attr_accessor :longitude, :latitude, :radius, :query
 
     def start
         initial_inputs

@@ -7,7 +7,7 @@ require 'net/http'
 require 'json'
 
 class InitialQuery
-    attr_reader :limit, :category, :longitude, :latitude,
+    attr_accessor :limit, :category, :longitude, :latitude,
         :radius, :parsed_hash
 
 
