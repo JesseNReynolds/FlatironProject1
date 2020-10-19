@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/initial_query.rb'
+require_relative '../lib/run_structure.rb'
