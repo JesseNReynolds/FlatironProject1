@@ -1,4 +1,3 @@
-require_relative '../lib/initial_query'
 require_relative '../environment'
 
 
