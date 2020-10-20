@@ -2,7 +2,7 @@ require_relative '../environment'
 
 class Restaurants
 
-    attr_accessor 
+    attr_accessor :parsed_reviews
 
     @@all = []
     @@filtered_for_price = []
@@ -41,7 +41,6 @@ class Restaurants
 
             new_restaurant.save
         end
-        
     end
 
     def self.price_range(array, min, max)
@@ -73,6 +72,13 @@ class Restaurants
         end
         @@filtered_by_types = array_of_restaurants - restaurants_to_exclude 
     end
+
+    def reviews
+        url = "https://api.yelp.com/v3/businesses/{#{self.id}}/reviews"
+        raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
+        @parsed_reviews = JSON.parse(raw_query_data)
+    end
+
 
 end
     
