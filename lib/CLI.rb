@@ -9,27 +9,31 @@ class CLI
         self.send_and_parse
         self.filter_rating
         self.filter_price
-        
+        self.exclude_types
+        self.print_random_restaurant
     end
 
     def initialize
 
+        puts "Please enter latitude:"
+        latitude = gets.chomp
+
+
         puts "Please enter longitude:"
         longitude = gets.chomp
 
-        puts "Please enter latitude:"
-        latitude = gets.chomp
 
         puts "Please enter radius (in miles) for search"
         radius = (gets.chomp.to_f * 1609.34).to_i 
         # This converts from miles, the standard unit of travel distance in the US, to meters, the unit that the Yelp API uses.
         
         @query = InitialQuery.new(longitude, latitude, radius)
+        # @query = InitialQuery.new(-105, 40, 30000)
     end
 
     def send_and_parse
         @parsed_data = @query.query_to_hash
-        Restaurants.new_from_json(@parsed_data)      
+        Restaurants.new_from_json(@parsed_data)
     end
 
     def filter_rating
@@ -40,6 +44,7 @@ class CLI
         max_rating = gets.chomp.to_f
 
         Restaurants.rating_range(Restaurants.all, min_rating, max_rating)
+        #  Restaurants.rating_range(Restaurants.all, 1, 5)
     end
 
     def filter_price
@@ -52,9 +57,39 @@ class CLI
         max_price = gets.chomp.to_i
 
         Restaurants.price_range(Restaurants.filtered_for_rating, min_price, max_price)
+        # Restaurants.price_range(Restaurants.filtered_for_rating, 1, 4)
+    end  
+
+    def exclude_types
+        array_of_titles = []
+        
+        Restaurants.filtered_for_price.each do |restaurant|
+            restaurant.categories.each do |index_of_array|
+                index_of_array.each do |key, value|
+                    if key == "title" && !array_of_titles.include?(value)
+                        array_of_titles << value
+                    end
+                end
+            end
+        end
+
+        puts "Ommit types by entering any undesired entry numbers (ex: 1, 3, 10 or 1,3,10)"
+        array_of_titles.each_with_index do |value, index|
+            puts "#{index + 1}: #{value}"
+        end
+        to_ommit = gets.chomp.gsub(/\s+/, "").split(",")
+        
+        to_ommit.each_with_index do |value, index|
+            to_ommit[index.to_i] = array_of_titles[value.to_i - 1]
+        end
+        # this transforms to_ommit from an array of ints to an array of titles.
+
+        Restaurants.remove_by_types(Restaurants.filtered_for_price, to_ommit)
     end
 
-        
+    def print_random_restaurant
+        puts Restaurants.filtered_by_types.sample
+    end
 
-
+  
 end

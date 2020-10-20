@@ -7,7 +7,11 @@ class Restaurants
     @@all = []
     @@filtered_for_price = []
     @@filtered_for_rating = []
+    @@filtered_by_types = []
 
+    def self.filtered_by_types
+        @@filtered_by_types
+    end
 
     def self.filtered_for_price
         @@filtered_for_price
@@ -30,11 +34,9 @@ class Restaurants
             new_restaurant = Restaurants.new
 
             hash.each do |key, value|
-                # if key == ("rating" || "price" || "phone" || "id" || "name" || "address1" || "address2" || "city" || "zip_code" || "address3" || "transactions")
                 new_restaurant.class.send(:attr_accessor, "#{key}")
                 # creates attr_accessor for each key in the imported hash  
                 new_restaurant.send("#{key}=", value)
-                # end
             end
 
             new_restaurant.save
@@ -44,8 +46,7 @@ class Restaurants
 
     def self.price_range(array, min, max)
        array.each do |restaurant|
-        binding.pry
-            if restaurant.price.length <= max && restaurant.price.length >= min
+            if restaurant.price != nil && restaurant.price.length <= max && restaurant.price.length >= min
                 @@filtered_for_price << restaurant
             end
         end
@@ -59,6 +60,21 @@ class Restaurants
         end  
     end
 
+    def self.remove_by_types(array_of_restaurants, array_of_types)
+        restaurants_to_exclude = []
+        array_of_restaurants.each do |restaurant|
+            restaurant.categories.each do |index_of_array|
+                index_of_array.each do |key, value|
+                    if key == "title" && array_of_types.include?(value)
+                        restaurants_to_exclude << restaurant
+                    end
+                end
+            end
+        end
+        @@filtered_by_types = array_of_restaurants - restaurants_to_exclude 
+        binding.pry
+    end
+    # NOT SURE IF THIS WORKS YET :UPSIDE_DOWN_FACE:
 
 end
     
