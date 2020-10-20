@@ -54,7 +54,7 @@ class InitialQuery
     def query_to_hash
         url = "https://api.yelp.com/v3/businesses/search?limit=#{@limit}&category=#{@category}&latitude=#{@latitude}&longitude=#{@longitude}&radius=#{@radius}"
         raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
-        @parsed_data = JSON.parse(raw_query_data)
+        @parsed_data = JSON.parse(raw_query_data)   
     end
 
 end
@@ -85,14 +85,16 @@ class Restaurants
         @@all << self
     end
 
-    def new_from_json (parsed_data)
+    def self.new_from_json (parsed_data)
         parsed_data["businesses"].each do |hash|
             new_restaurant = Restaurants.new
 
             hash.each do |key, value|
-                if key == ("rating" || "price" || "phone" || "id" || "name" || "address1" || "address2" || "city" || "zip_code" || "address3" || "transactions")
-                    new_restaurant.send("#{key}=", value)
-                end
+                # if key == ("rating" || "price" || "phone" || "id" || "name" || "address1" || "address2" || "city" || "zip_code" || "address3" || "transactions")
+                new_restaurant.class.send(:attr_accessor, "#{key}")
+                # creates attr_accessor for each key in the imported hash  
+                new_restaurant.send("#{key}=", value)
+                # end
             end
 
             new_restaurant.save
@@ -101,16 +103,17 @@ class Restaurants
     end
 
     def self.price_range(array, min, max)
-       array do |restaruant|
-            if restaruant.price.length <= max && restaurant.price.length >= min
-               @@filtered_for_price << restaurant
+       array.each do |restaurant|
+        binding.pry
+            if restaurant.price.length <= max && restaurant.price.length >= min
+                @@filtered_for_price << restaurant
             end
         end
     end
 
     def self.rating_range(array, min, max)
-        array do |restaurant|
-            if restaurant.rating.length >= min && restaurant.rating.length <= max
+        array.each do |restaurant|
+            if restaurant.rating >= min && restaurant.rating <= max
                 @@filtered_for_rating << restaurant
             end
         end  

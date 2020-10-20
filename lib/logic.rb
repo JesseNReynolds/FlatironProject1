@@ -34,27 +34,25 @@ class CLI
     end
 
     def filter_rating
-        puts "Please enter minimum permissible rating from 1-5"
-        min_rating = gets.chomp
+        puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
+        min_rating = gets.chomp.to_f
 
-        puts "Please enter maximum permissible rating from 1-5"
-        max_rating = gets.chomp
+        puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
+        max_rating = gets.chomp.to_f
 
         Restaurants.rating_range(Restaurants.all, min_rating, max_rating)
-        binding.pry
     end
 
     def filter_price
         puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
         
-        puts "Please enter a minimum price range from 1 to 4"
-        min_price = gets.chomp
+        puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
+        min_price = gets.chomp.to_i
 
-        puts "Please enter a maximum price range from 1 to 4"
-        max_price = gets.chomp
+        puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
+        max_price = gets.chomp.to_i
 
         Restaurants.price_range(Restaurants.filtered_for_rating, min_price, max_price)
-        binding.pry
     end
 
         
