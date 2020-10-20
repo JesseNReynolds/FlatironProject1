@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/initial_query.rb'
-require_relative '../lib/run_structure.rb'
+require_relative '../lib/logic.rb'
 
-Logic.start
+CLI.new.start

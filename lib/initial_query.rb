@@ -1,10 +1,9 @@
+require_relative '../environment'
+
 # This class is responsible for formatting the initial query to the API
 # and returning an array of businesses. It then creates an array of
 # restaurant objects to be filtered and sampled.
 
-require 'open-uri'
-require 'net/http'
-require 'json'
 
     # {
     #   "rating": 4,
@@ -40,7 +39,7 @@ require 'json'
 class InitialQuery
     
     attr_accessor :limit, :category, :longitude, :latitude,
-        :radius, :parsed_data,
+        :radius, :parsed_data
 
 
     def initialize(longitude, latitude, radius)
@@ -53,8 +52,8 @@ class InitialQuery
     end
 
     def query_to_hash
-        uri = "https://api.yelp.com/v3/businesses/search?limit=#{@limit}&category=#{@category}&latitude=#{@latitude}&longitude=#{@longitude}&radius=#{@radius}"
-        raw_query_data = URI.parse(url)
+        url = "https://api.yelp.com/v3/businesses/search?limit=#{@limit}&category=#{@category}&latitude=#{@latitude}&longitude=#{@longitude}&radius=#{@radius}"
+        raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
         @parsed_data = JSON.parse(raw_query_data)
     end
 
@@ -66,6 +65,17 @@ class Restaurants
      :address1, :address2, :address3, :city, :zip_code
 
     @@all = []
+    @@filtered_for_price = []
+    @@filtered_for_rating = []
+
+
+    def self.filtered_for_price
+        @@filtered_for_price
+    end
+
+    def self.filtered_for_rating
+        @@filtered_for_rating
+    end
 
     def self.all
         @@all
@@ -89,6 +99,23 @@ class Restaurants
         end
         
     end
+
+    def self.price_range(array, min, max)
+       array do |restaruant|
+            if restaruant.price.length <= max && restaurant.price.length >= min
+               @@filtered_for_price << restaurant
+            end
+        end
+    end
+
+    def self.rating_range(array, min, max)
+        array do |restaurant|
+            if restaurant.rating.length >= min && restaurant.rating.length <= max
+                @@filtered_for_rating << restaurant
+            end
+        end  
+    end
+
 
 end
     
