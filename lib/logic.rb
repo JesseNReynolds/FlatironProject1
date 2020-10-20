@@ -3,7 +3,7 @@ require_relative '../lib/initial_query'
 
 class Logic
     
-    attr_accessor :longitude, :latitude, :radius, :query, :parsed_data
+    attr_accessor :query, :parsed_data
 
     def self.start
         self.new
@@ -11,21 +11,21 @@ class Logic
         Restaurants.new_from_json(@parsed_data)
         
 
-        
+
     end
 
     def initialize
         puts "Please enter longitude:"
-        @longitude = gets.chomp
+        longitude = gets.chomp
 
         puts "Please enter latitude:"
-        @latitude = gets.chomp
+        latitude = gets.chomp
 
         puts "enter radius (in miles) for search"
-        @radius = (gets.chomp.to_f * 1609.34) 
+        radius = (gets.chomp.to_f * 1609.34) 
         # This converts from miles, the standard unit of travel distance in the US, to meters, the unit that the Yelp API uses.
        
-        @query = InitialQuery.new(@longitude, @latitude, @radius)
+        @query = InitialQuery.new(longitude, latitude, radius)
     end
 
 end
