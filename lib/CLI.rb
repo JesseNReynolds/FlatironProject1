@@ -28,7 +28,7 @@ class CLI
         # This converts from miles, the standard unit of travel distance in the US, to meters, the unit that the Yelp API uses.
         
         @query = InitialQuery.new(longitude, latitude, radius)
-        # @query = InitialQuery.new(-105, 40, 30000)
+        # @query = InitialQuery.new(-105, 40, 1000)
     end
 
     def send_and_parse
@@ -88,7 +88,15 @@ class CLI
     end
 
     def print_random_restaurant
-        puts Restaurants.filtered_by_types.sample
+        chosen_one = Restaurants.filtered_by_types.sample
+        puts "Y'all gonna eat at #{chosen_one.name}. Get in the car."
+        puts "#{chosen_one.location["address1"]}"
+        puts "#{chosen_one.location["city"]}, #{chosen_one.location["zip_code"]}"
+        puts "#{chosen_one.phone}"
+        puts "Price range: #{chosen_one.price}/$$$$"
+        puts "Rated #{chosen_one.rating} in #{chosen_one.review_count} reviews."
+        # I the above line is against the spirit of the the app
+        # which is light-hearted discovery, but I'm leaving it for now.
     end
 
   

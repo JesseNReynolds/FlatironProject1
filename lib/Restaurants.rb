@@ -72,9 +72,7 @@ class Restaurants
             end
         end
         @@filtered_by_types = array_of_restaurants - restaurants_to_exclude 
-        binding.pry
     end
-    # NOT SURE IF THIS WORKS YET :UPSIDE_DOWN_FACE:
 
 end
     
