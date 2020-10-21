@@ -9,6 +9,10 @@ class Restaurants
     @@filtered_for_rating = []
     @@filtered_by_types = []
 
+    def parsed_reviews
+        @parsed_reviews
+    end
+
     def self.filtered_by_types
         @@filtered_by_types
     end
@@ -74,7 +78,7 @@ class Restaurants
     end
 
     def reviews
-        url = "https://api.yelp.com/v3/businesses/{#{self.id}}/reviews"
+        url = "https://api.yelp.com/v3/businesses/#{self.id}/reviews"
         raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
         @parsed_reviews = JSON.parse(raw_query_data)
     end

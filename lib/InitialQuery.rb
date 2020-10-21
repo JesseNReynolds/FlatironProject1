@@ -6,7 +6,7 @@ class InitialQuery
         :radius, :parsed_data
 
 
-    def initialize(longitude, latitude, radius)
+    def initialize(latitude, longitude, radius)
         @limit = 50 
         # max limit the api supports as of 10/19/20 is 50
         @category = "Restaurants"

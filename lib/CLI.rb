@@ -16,20 +16,20 @@ class CLI
 
     def initialize
 
-        # puts "Please enter latitude:"
-        # latitude = gets.chomp
+        puts "Please enter latitude:"
+        latitude = gets.chomp
 
 
-        # puts "Please enter longitude:"
-        # longitude = gets.chomp
+        puts "Please enter longitude:"
+        longitude = gets.chomp
 
 
-        # puts "Please enter radius (in miles) for search"
-        # radius = (gets.chomp.to_f * 1609.34).to_i 
+        puts "Please enter radius (in miles) for search"
+        radius = (gets.chomp.to_f * 1609.34).to_i 
         # This converts from miles, the standard unit of travel distance in the US, to meters, the unit that the Yelp API uses.
         
-        # @query = InitialQuery.new(longitude, latitude, radius)
-        @query = InitialQuery.new(-105, 40, 10000)
+        @query = InitialQuery.new(latitude, longitude, radius)
+        # @query = InitialQuery.new(-105, 40, 10000)
     end
 
     def send_and_parse
@@ -38,27 +38,47 @@ class CLI
     end
 
     def filter_rating
-        # puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
-        # min_rating = gets.chomp.to_f
+        puts "Do you want to filter by rating? (y/n)"
+        answer = gets.chomp
+        if answer == "y"
+            puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
+            min_rating = gets.chomp.to_f
 
-        # puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
-        # max_rating = gets.chomp.to_f
+            puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
+            max_rating = gets.chomp.to_f
+        elsif answer == "n"
+            min_rating = 1
+            max_rating = 2
+        else
+            puts "Sorry, I don't understand, please respond with y or n"
+            filter_price
+        end
 
-        # Restaurants.rating_range(Restaurants.all, min_rating, max_rating)
-         Restaurants.rating_range(Restaurants.all, 1, 5)
+        Restaurants.rating_range(Restaurants.all, min_rating, max_rating)
+        #  Restaurants.rating_range(Restaurants.all, 1, 5)
     end
 
     def filter_price
-        # puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
-        
-        # puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
-        # min_price = gets.chomp.to_i
+        puts "Do you want to filter by price? (y/n)"
+        answer = gets.chomp
+        if answer == "y"
+            puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
+            
+            puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
+            min_price = gets.chomp.to_i
 
-        # puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
-        # max_price = gets.chomp.to_i
+            puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
+        max_price = gets.chomp.to_i
+        elsif answer == "n"
+            min_price = 1
+            max_price = 4
+        else
+            puts "Sorry, I don't understand, please respond with y or n"
+            filter_price
+        end
 
-        # Restaurants.price_range(Restaurants.filtered_for_rating, min_price, max_price)
-        Restaurants.price_range(Restaurants.filtered_for_rating, 1, 4)
+        Restaurants.price_range(Restaurants.filtered_for_rating, min_price, max_price)
+        # Restaurants.price_range(Restaurants.filtered_for_rating, 1, 4)
     end  
 
     def exclude_types
@@ -101,11 +121,10 @@ class CLI
     def ask_about_reviews
         puts "Would you like to see three review excerpts? (y/n)"
         answer = gets.chomp
-        binding.pry
         if answer == "y"
-            puts "#{@chosen_one.parsed_reviews[0]["text"]}"
-            puts "#{@chosen_one.parsed_reviews[1]["text"]}"
-            puts "#{@chosen_one.parsed_reviews[2]["text"]}"
+            puts "#{@chosen_one.parsed_reviews["reviews"][0]["text"]}"
+            puts "#{@chosen_one.parsed_reviews["reviews"][1]["text"]}"
+            puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
         elsif answer == "n"
             puts "Good, get in the car."
         end
