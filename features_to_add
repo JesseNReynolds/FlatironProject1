@@ -4,3 +4,8 @@ find a way to get users current location in more elegant way, if I can.
 add option to look for delivery, takeout, dine-in
 
 add ability to iterate over more results
+
+filter out closed restaurants
+    ability to define time of visit or order
+
+code response for no restaurants that meet spec or no restaurants in initial query

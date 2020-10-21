@@ -48,7 +48,7 @@ class CLI
             max_rating = gets.chomp.to_f
         elsif answer == "n"
             min_rating = 1
-            max_rating = 2
+            max_rating = 5
         else
             puts "Sorry, I don't understand, please respond with y or n"
             filter_price
@@ -61,7 +61,7 @@ class CLI
     def filter_price
         puts "Do you want to filter by price? (y/n)"
         answer = gets.chomp
-        if answer == "y"
+        if answer == "y" 
             puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
             
             puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
@@ -110,6 +110,7 @@ class CLI
 
     def print_random_restaurant
         @chosen_one = Restaurants.filtered_by_types.sample
+        @chosen_one.reviews
         puts "Y'all gonna eat at #{@chosen_one.name}. Get in the car."
         puts "#{@chosen_one.location["display_address"]}"
         puts "Price range: #{@chosen_one.price}/$$$$"
@@ -122,8 +123,14 @@ class CLI
         puts "Would you like to see three review excerpts? (y/n)"
         answer = gets.chomp
         if answer == "y"
+            puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
+            puts "#{@chosen_one.parsed_reviews["reviews"][0]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][0]["rating"]} stars."
             puts "#{@chosen_one.parsed_reviews["reviews"][0]["text"]}"
+            puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
+            puts "#{@chosen_one.parsed_reviews["reviews"][1]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][1]["rating"]} stars."
             puts "#{@chosen_one.parsed_reviews["reviews"][1]["text"]}"
+            puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
+            puts "#{@chosen_one.parsed_reviews["reviews"][2]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][2]["rating"]} stars."
             puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
         elsif answer == "n"
             puts "Good, get in the car."
