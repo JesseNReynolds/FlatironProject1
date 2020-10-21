@@ -25,6 +25,7 @@ class Restaurants
         @@filtered_for_rating
     end
 
+
     def self.all
         @@all
     end

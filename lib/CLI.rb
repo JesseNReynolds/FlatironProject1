@@ -3,9 +3,10 @@ require_relative '../environment'
 
 class CLI
     
-    attr_accessor :query, :parsed_data
+    attr_accessor :query, :parsed_data, :latitude, :longitude, :radius, :open_boolean
 
     def start
+        self.open_now
         self.send_and_parse
         self.filter_rating
         self.filter_price
@@ -17,36 +18,48 @@ class CLI
     def initialize
 
         puts "Please enter latitude:"
-        latitude = gets.chomp
+        @latitude = gets.chomp
 
 
         puts "Please enter longitude:"
-        longitude = gets.chomp
+        @longitude = gets.chomp
 
 
         puts "Please enter radius (in miles) for search"
-        radius = (gets.chomp.to_f * 1609.34).to_i 
+        @radius = (gets.chomp.to_f * 1609.34).to_i 
         # This converts from miles, the standard unit of travel distance in the US, to meters, the unit that the Yelp API uses.
-        
-        @query = InitialQuery.new(latitude, longitude, radius)
-        # @query = InitialQuery.new(-105, 40, 10000)
     end
 
+    def open_now
+        puts "Would you like to return restaurants that are closed right now? (y/n)"
+        open_only = gets.chomp
+            if open_only == "y" ||  open_only.downcase == "yes"
+                @open_boolean = true
+            elsif open_only == "n" || open_only.downcase == "no"
+                @open_boolean = false
+            else
+                puts "Sorry, I don't understand, please respond with y or n"
+                open_now
+            end 
+        end
+
     def send_and_parse
+        @query = InitialQuery.new(@latitude, @longitude, @radius, @open_boolean)
         @parsed_data = @query.query_to_hash
         Restaurants.new_from_json(@parsed_data)
     end
 
+    
     def filter_rating
         puts "Do you want to filter by rating? (y/n)"
         answer = gets.chomp
-        if answer == "y"
+        if answer == "y" || answer.downcase == "yes"
             puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
             min_rating = gets.chomp.to_f
 
             puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
             max_rating = gets.chomp.to_f
-        elsif answer == "n"
+        elsif answer == "n" || answer.downcase == "no"
             min_rating = 1
             max_rating = 5
         else
@@ -61,7 +74,7 @@ class CLI
     def filter_price
         puts "Do you want to filter by price? (y/n)"
         answer = gets.chomp
-        if answer == "y" 
+        if answer == "y" || answer.downcase == "yes"
             puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
             
             puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
@@ -69,7 +82,7 @@ class CLI
 
             puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
         max_price = gets.chomp.to_i
-        elsif answer == "n"
+        elsif answer == "n" || answer.downcase == "no"
             min_price = 1
             max_price = 4
         else
