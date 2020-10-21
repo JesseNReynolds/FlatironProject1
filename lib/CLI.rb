@@ -6,16 +6,21 @@ class CLI
     attr_accessor :query, :parsed_data, :latitude, :longitude, :radius, :open_boolean
 
     def start
+        self.location_info
         self.open_now
         self.send_and_parse
+        self.check_empty(Restaurants.all)
         self.filter_rating
+        self.check_empty(Restaurants.filtered_for_rating)
         self.filter_price
+        self.check_empty(Restaurants.filtered_for_price)
         self.exclude_types
+        self.check_empty(Restaurants.filtered_by_types)
         self.print_random_restaurant
         self.ask_about_reviews
     end
 
-    def initialize
+    def location_info
 
         puts "Please enter latitude:"
         @latitude = gets.chomp
@@ -49,6 +54,22 @@ class CLI
         Restaurants.new_from_json(@parsed_data)
     end
 
+    def check_empty(list)
+        if list == []
+            puts "Sorry, we couldn't find any restaurants that meet your criteria, please start again!"
+            puts "Collecting info again in 5..."
+            sleep 1
+            puts "Collecting info again in 4..."
+            sleep 1
+            puts "Collecting info again in 3..."
+            sleep 1
+            puts "Collecting info again in 2..."
+            sleep 1
+            puts "Collecting info again in 1..."
+            sleep 1
+            self.start            
+        end
+    end
     
     def filter_rating
         puts "Do you want to filter by rating? (y/n)"
@@ -134,7 +155,7 @@ class CLI
     def ask_about_reviews
         puts "Would you like to see three review excerpts? (y/n)"
         answer = gets.chomp
-        if answer == "y"
+        if answer == "y" || answer.downcase == "yes"
             @chosen_one.reviews
             puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
             puts "#{@chosen_one.parsed_reviews["reviews"][0]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][0]["rating"]} stars."
@@ -145,8 +166,11 @@ class CLI
             puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
             puts "#{@chosen_one.parsed_reviews["reviews"][2]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][2]["rating"]} stars."
             puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
-        elsif answer == "n"
+        elsif answer == "n" || answer.downcase == "no"
             puts "Good, get in the car."
+        else
+            puts "Sorry, I don't understand, please respond with y or n"
+            ask_about_reviews
         end
     end
   
