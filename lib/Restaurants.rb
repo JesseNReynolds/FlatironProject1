@@ -34,10 +34,10 @@ class Restaurants
     end
 
     def self.new_from_json (parsed_data)
-        parsed_data["businesses"].each do |hash|
+        parsed_data["businesses"].each do |item_in_array|
             new_restaurant = Restaurants.new
 
-            hash.each do |key, value|
+            item_in_array.each do |key, value|
                 new_restaurant.class.send(:attr_accessor, "#{key}")
                 # creates attr_accessor for each key in the imported hash  
                 new_restaurant.send("#{key}=", value)

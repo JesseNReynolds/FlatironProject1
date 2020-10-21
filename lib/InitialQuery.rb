@@ -18,7 +18,7 @@ class InitialQuery
     def query_to_hash
         url = "https://api.yelp.com/v3/businesses/search?limit=#{@limit}&category=#{@category}&latitude=#{@latitude}&longitude=#{@longitude}&radius=#{@radius}&price=1,2,3,4"
         raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
-        @parsed_data = JSON.parse(raw_query_data)   
+        JSON.parse(raw_query_data)   
     end
 
 end

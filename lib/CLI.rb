@@ -85,8 +85,8 @@ class CLI
         array_of_titles = []
         
         Restaurants.filtered_for_price.each do |restaurant|
-            restaurant.categories.each do |index_of_array|
-                index_of_array.each do |key, value|
+            restaurant.categories.each do |category|
+                category.each do |key, value|
                     if key == "title" && !array_of_titles.include?(value)
                         array_of_titles << value
                     end
@@ -110,7 +110,6 @@ class CLI
 
     def print_random_restaurant
         @chosen_one = Restaurants.filtered_by_types.sample
-        @chosen_one.reviews
         puts "Y'all gonna eat at #{@chosen_one.name}. Get in the car."
         puts "#{@chosen_one.location["display_address"]}"
         puts "Price range: #{@chosen_one.price}/$$$$"
@@ -123,6 +122,7 @@ class CLI
         puts "Would you like to see three review excerpts? (y/n)"
         answer = gets.chomp
         if answer == "y"
+            @chosen_one.reviews
             puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
             puts "#{@chosen_one.parsed_reviews["reviews"][0]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][0]["rating"]} stars."
             puts "#{@chosen_one.parsed_reviews["reviews"][0]["text"]}"
