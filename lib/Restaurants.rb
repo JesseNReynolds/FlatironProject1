@@ -8,6 +8,7 @@ class Restaurants
     @@filtered_for_price = []
     @@filtered_for_rating = []
     @@filtered_by_types = []
+    @@filtered_by_transactions = []
 
     def parsed_reviews
         @parsed_reviews
@@ -23,6 +24,10 @@ class Restaurants
 
     def self.filtered_for_rating
         @@filtered_for_rating
+    end
+
+    def self.filtered_by_transactions
+        @@filtered_by_transactions
     end
 
 
@@ -77,6 +82,21 @@ class Restaurants
         end
         @@filtered_by_types = array_of_restaurants - restaurants_to_exclude 
     end
+
+    def self.filter_for_delivery(array_of_restaurants, filter_boolean)
+        if filter_boolean == true
+            array_of_restaurants.each do |restaurant|
+               if restaurant.transactions.include?("delivery")
+                @@filtered_by_transactions << restaurant
+               end
+            end
+        else 
+            array_of_restaurants.each do |restaurant|
+            @@filtered_by_transactions << restaurant
+            end
+        end
+    end
+
 
     def reviews
         url = "https://api.yelp.com/v3/businesses/#{self.id}/reviews"

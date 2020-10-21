@@ -16,6 +16,8 @@ class CLI
         self.check_empty(Restaurants.filtered_for_price)
         self.exclude_types
         self.check_empty(Restaurants.filtered_by_types)
+        self.filter_by_transactions
+        self.check_empty(Restaurants.filtered_by_transactions)
         self.print_random_restaurant
         self.ask_about_reviews
     end
@@ -142,9 +144,32 @@ class CLI
         Restaurants.remove_by_types(Restaurants.filtered_for_price, to_ommit)
     end
 
+    def filter_by_transactions
+        puts "Would you like to see all restaurants, or only ones that offer delivery?"
+        puts "1: All"
+        puts "2: Delivery only"
+        answer = gets.chomp
+
+        if answer.to_i == 1 || answer.downcase == "all"
+            filter_boolean = false
+        elsif answer.to_i == 2 || answer.downcase == "delivery" || answer.downcase == "delivery only"
+            filter_boolean = true
+        else
+            puts "I'm sorry, I don't understand. Please enter 1 or 2."
+            filter_by_transactions
+        end
+
+        Restaurants.filter_for_delivery(Restaurants.filtered_by_types, filter_boolean)
+    end
+    
+
+
+
+  
+    
     def print_random_restaurant
-        @chosen_one = Restaurants.filtered_by_types.sample
-        puts "Y'all gonna eat at #{@chosen_one.name}. Get in the car."
+        @chosen_one = Restaurants.filtered_by_transactions.sample
+        puts "Y'all gonna eat at #{@chosen_one.name}. Enjoy your meal!"
         puts "#{@chosen_one.location["display_address"]}"
         puts "Price range: #{@chosen_one.price}/$$$$"
         puts "Rated #{@chosen_one.rating} in #{@chosen_one.review_count} reviews."
@@ -167,7 +192,7 @@ class CLI
             puts "#{@chosen_one.parsed_reviews["reviews"][2]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][2]["rating"]} stars."
             puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
         elsif answer == "n" || answer.downcase == "no"
-            puts "Good, get in the car."
+            puts "Enjoy your meal!"
         else
             puts "Sorry, I don't understand, please respond with y or n"
             ask_about_reviews
