@@ -27,10 +27,8 @@ class CLI
         puts "Please enter latitude:"
         @latitude = gets.chomp
 
-
         puts "Please enter longitude:"
         @longitude = gets.chomp
-
 
         puts "Please enter radius (in miles) for search"
         @radius = (gets.chomp.to_f * 1609.34).to_i 
@@ -40,15 +38,16 @@ class CLI
     def open_now
         puts "Would you like to return restaurants that are closed right now? (y/n)"
         open_only = gets.chomp
-            if open_only == "y" ||  open_only.downcase == "yes"
-                @open_boolean = true
-            elsif open_only == "n" || open_only.downcase == "no"
-                @open_boolean = false
-            else
-                puts "Sorry, I don't understand, please respond with y or n"
-                open_now
-            end 
-        end
+
+        if open_only == "y" ||  open_only.downcase == "yes"
+            @open_boolean = true
+        elsif open_only == "n" || open_only.downcase == "no"
+            @open_boolean = false
+        else
+            puts "Sorry, I don't understand, please respond with y or n"
+            open_now
+        end 
+    end
 
     def send_and_parse
         @query = InitialQuery.new(@latitude, @longitude, @radius, @open_boolean)
@@ -82,6 +81,10 @@ class CLI
 
             puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
             max_rating = gets.chomp.to_f
+            if min_rating >= max_rating 
+                puts "Please enter a maximum rating that is higher than your minimum rating."
+                filter_rating
+            end
         elsif answer == "n" || answer.downcase == "no"
             min_rating = 1
             max_rating = 5
@@ -104,7 +107,13 @@ class CLI
             min_price = gets.chomp.to_i
 
             puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
-        max_price = gets.chomp.to_i
+            max_price = gets.chomp.to_i
+
+            if min_price > max_price 
+                puts "Please enter a maximum price range that is higher than or equal to your minimum price range."
+                filter_price
+            end
+
         elsif answer == "n" || answer.downcase == "no"
             min_price = 1
             max_price = 4
@@ -118,30 +127,34 @@ class CLI
     end  
 
     def exclude_types
-        array_of_titles = []
+        restaurant_types = []
         
         Restaurants.filtered_for_price.each do |restaurant|
             restaurant.categories.each do |category|
                 category.each do |key, value|
-                    if key == "title" && !array_of_titles.include?(value)
-                        array_of_titles << value
+                    if key == "title" && !restaurant_types.include?(value)
+                        restaurant_types << value
                     end
                 end
+                # if !restaurant_types.include?category["title"]
+                #     restaurant_types << category["title"]
+                # end
             end
         end
 
-        puts "Ommit types by entering any undesired entry numbers (ex: 1, 3, 10 or 1,3,10)"
-        array_of_titles.each_with_index do |value, index|
-            puts "#{index + 1}: #{value}"
+        puts "You may omit types of restaurants by entering any undesired entry numbers (ex: 1, 3, 10 or 1,3,10)"
+        puts "If you don't want to omit any types, just hit enter!"
+        restaurant_types.each_with_index do |type, index|
+            puts "#{index + 1}: #{type}"
         end
-        to_ommit = gets.chomp.gsub(/\s+/, "").split(",")
+        to_omit = gets.chomp.gsub(/\s+/, "").split(",")
         
-        to_ommit.each_with_index do |value, index|
-            to_ommit[index.to_i] = array_of_titles[value.to_i - 1]
+        to_omit.each_with_index do |value, index|
+            to_omit[index.to_i] = restaurant_types[value.to_i - 1]
         end
-        # this transforms to_ommit from an array of ints to an array of titles.
+        # this transforms to_omit from an array of ints to an array of titles.
 
-        Restaurants.remove_by_types(Restaurants.filtered_for_price, to_ommit)
+        Restaurants.remove_by_types(Restaurants.filtered_for_price, to_omit)
     end
 
     def filter_by_transactions

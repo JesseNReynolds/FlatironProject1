@@ -39,25 +39,17 @@ class Restaurants
         @@all << self
     end
 
-    def self.new_from_json (parsed_data)
-        parsed_data["businesses"].each do |item_in_array|
+    def self.new_from_json(parsed_data)
+        parsed_data["businesses"].each do |business|
             new_restaurant = Restaurants.new
 
-            item_in_array.each do |key, value|
+            business.each do |key, value|
                 new_restaurant.class.send(:attr_accessor, "#{key}")
                 # creates attr_accessor for each key in the imported hash  
                 new_restaurant.send("#{key}=", value)
             end
 
             new_restaurant.save
-        end
-    end
-
-    def self.price_range(array, min, max)
-       array.each do |restaurant|
-            if restaurant.price != nil && restaurant.price.length <= max && restaurant.price.length >= min
-                @@filtered_for_price << restaurant
-            end
         end
     end
 
@@ -69,15 +61,26 @@ class Restaurants
         end  
     end
 
+    def self.price_range(array, min, max)
+       array.each do |restaurant|
+            if restaurant.price.length <= max && restaurant.price.length >= min
+                @@filtered_for_price << restaurant
+            end
+        end
+    end
+
     def self.remove_by_types(array_of_restaurants, array_of_types)
         restaurants_to_exclude = []
         array_of_restaurants.each do |restaurant|
-            restaurant.categories.each do |index_of_array|
+            restaurant.categories.each do |category|
                 index_of_array.each do |key, value|
                     if key == "title" && array_of_types.include?(value)
                         restaurants_to_exclude << restaurant
                     end
                 end
+                # if !restaurants_to_exclude.include?(category["title"])
+                #     restaurants_to_exclude << restaurant
+                # end
             end
         end
         @@filtered_by_types = array_of_restaurants - restaurants_to_exclude 
