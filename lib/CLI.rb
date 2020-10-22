@@ -30,8 +30,17 @@ class CLI
         puts "Please enter longitude:"
         @longitude = gets.chomp
 
-        puts "Please enter radius (in miles) for search"
-        @radius = (gets.chomp.to_f * 1609.34).to_i 
+        complete = false
+        while complete == false
+            puts "Please enter radius (in miles) for search (limit 24.85)"
+            @radius = (gets.chomp.to_f * 1609.34).to_i 
+            if @radius > 40000
+                puts "Radius too large, please enter a radius under 24.85!"
+            else
+                complete = true
+            end
+        end
+
         # This converts from miles, the standard unit of travel distance in the US, to meters, the unit that the Yelp API uses.
     end
 
