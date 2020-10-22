@@ -4,6 +4,7 @@ to squash the last bug in my minimum viable product. Truly, a great man and one 
 to call my friend.
 
 
-credit_holden
+def credit_holden
 Holden Sheftel, who let me do a demo and talk-through and told me of the dangers of recursion.
 credit_holden
+end
