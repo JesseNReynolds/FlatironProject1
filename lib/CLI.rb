@@ -36,17 +36,22 @@ class CLI
     end
 
     def open_now
-        puts "Would you like to return restaurants that are closed right now? (y/n)"
-        open_only = gets.chomp
-
-        if open_only == "y" ||  open_only.downcase == "yes"
-            @open_boolean = true
-        elsif open_only == "n" || open_only.downcase == "no"
-            @open_boolean = false
-        else
-            puts "Sorry, I don't understand, please respond with y or n"
-            open_now
-        end 
+        complete = false
+    
+        while complete == false
+            puts "Would you like to return restaurants that are closed right now? (y/n)"
+            open_only = gets.chomp
+            
+            if open_only == "y" ||  open_only.downcase == "yes"
+                @open_boolean = true
+                complete = true
+            elsif open_only == "n" || open_only.downcase == "no"
+                @open_boolean = false
+                complete = true
+            else
+                puts "Sorry, I don't understand, please respond with y or n"
+            end 
+        end
     end
 
     def send_and_parse
@@ -73,24 +78,30 @@ class CLI
     end
     
     def filter_rating
-        puts "Do you want to filter by rating? (y/n)"
-        answer = gets.chomp
-        if answer == "y" || answer.downcase == "yes"
-            puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
-            min_rating = gets.chomp.to_f
+        complete = false
+    
+        while complete == false
 
-            puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
-            max_rating = gets.chomp.to_f
-            if min_rating >= max_rating 
-                puts "Please enter a maximum rating that is higher than your minimum rating."
-                filter_rating
+            puts "Do you want to filter by rating? (y/n)"
+            answer = gets.chomp
+            if answer == "y" || answer.downcase == "yes"
+                puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
+                min_rating = gets.chomp.to_f
+
+                puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
+                max_rating = gets.chomp.to_f
+                if min_rating >= max_rating 
+                    puts "Please enter a maximum rating that is higher than your minimum rating."
+                    filter_rating
+                end
+                complete = true
+            elsif answer == "n" || answer.downcase == "no"
+                min_rating = 1
+                max_rating = 5
+                complete = true
+            else
+                puts "Sorry, I don't understand, please respond with y or n"
             end
-        elsif answer == "n" || answer.downcase == "no"
-            min_rating = 1
-            max_rating = 5
-        else
-            puts "Sorry, I don't understand, please respond with y or n"
-            filter_price
         end
 
         Restaurants.rating_range(Restaurants.all, min_rating, max_rating)
@@ -98,28 +109,34 @@ class CLI
     end
 
     def filter_price
-        puts "Do you want to filter by price? (y/n)"
-        answer = gets.chomp
-        if answer == "y" || answer.downcase == "yes"
-            puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
-            
-            puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
-            min_price = gets.chomp.to_i
+        complete = false
+    
+        while complete == false
+            puts "Do you want to filter by price? (y/n)"
+            answer = gets.chomp
+            if answer == "y" || answer.downcase == "yes"
+                puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
+                
+                puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
+                min_price = gets.chomp.to_i
 
-            puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
-            max_price = gets.chomp.to_i
+                puts "Please enter a maximum price range from 1 to 4(decimals NOT OK!)"
+                max_price = gets.chomp.to_i
 
-            if min_price > max_price 
-                puts "Please enter a maximum price range that is higher than or equal to your minimum price range."
-                filter_price
+                complete = true
+
+                if min_price > max_price 
+                    puts "Please enter a maximum price range that is higher than or equal to your minimum price range."
+                    complete = false
+                end
+
+            elsif answer == "n" || answer.downcase == "no"
+                min_price = 1
+                max_price = 4
+                complete = true
+            else
+                puts "Sorry, I don't understand, please respond with y or n"
             end
-
-        elsif answer == "n" || answer.downcase == "no"
-            min_price = 1
-            max_price = 4
-        else
-            puts "Sorry, I don't understand, please respond with y or n"
-            filter_price
         end
 
         Restaurants.price_range(Restaurants.filtered_for_rating, min_price, max_price)
@@ -158,18 +175,23 @@ class CLI
     end
 
     def filter_by_transactions
-        puts "Would you like to see all restaurants, or only ones that offer delivery?"
-        puts "1: All"
-        puts "2: Delivery only"
-        answer = gets.chomp
+        complete = false
+    
+        while complete == false
+            puts "Would you like to see all restaurants, or only ones that offer delivery?"
+            puts "1: All"
+            puts "2: Delivery only"
+            answer = gets.chomp
 
-        if answer.to_i == 1 || answer.downcase == "all"
-            filter_boolean = false
-        elsif answer.to_i == 2 || answer.downcase == "delivery" || answer.downcase == "delivery only"
-            filter_boolean = true
-        else
-            puts "I'm sorry, I don't understand. Please enter 1 or 2."
-            filter_by_transactions
+            if answer.to_i == 1 || answer.downcase == "all"
+                filter_boolean = false
+                complete = true
+            elsif answer.to_i == 2 || answer.downcase == "delivery" || answer.downcase == "delivery only"
+                filter_boolean = true
+                complete = true
+            else
+                puts "I'm sorry, I don't understand. Please enter 1 or 2."
+            end
         end
 
         Restaurants.filter_for_delivery(Restaurants.filtered_by_types, filter_boolean)
@@ -191,24 +213,29 @@ class CLI
     end
 
     def ask_about_reviews
-        puts "Would you like to see three review excerpts? (y/n)"
-        answer = gets.chomp
-        if answer == "y" || answer.downcase == "yes"
-            @chosen_one.reviews
-            puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
-            puts "#{@chosen_one.parsed_reviews["reviews"][0]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][0]["rating"]} stars."
-            puts "#{@chosen_one.parsed_reviews["reviews"][0]["text"]}"
-            puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
-            puts "#{@chosen_one.parsed_reviews["reviews"][1]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][1]["rating"]} stars."
-            puts "#{@chosen_one.parsed_reviews["reviews"][1]["text"]}"
-            puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
-            puts "#{@chosen_one.parsed_reviews["reviews"][2]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][2]["rating"]} stars."
-            puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
-        elsif answer == "n" || answer.downcase == "no"
-            puts "Enjoy your meal!"
-        else
-            puts "Sorry, I don't understand, please respond with y or n"
-            ask_about_reviews
+        complete = false
+    
+        while complete == false
+            puts "Would you like to see three review excerpts? (y/n)"
+            answer = gets.chomp
+            if answer == "y" || answer.downcase == "yes"
+                @chosen_one.reviews
+                puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
+                puts "#{@chosen_one.parsed_reviews["reviews"][0]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][0]["rating"]} stars."
+                puts "#{@chosen_one.parsed_reviews["reviews"][0]["text"]}"
+                puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
+                puts "#{@chosen_one.parsed_reviews["reviews"][1]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][1]["rating"]} stars."
+                puts "#{@chosen_one.parsed_reviews["reviews"][1]["text"]}"
+                puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
+                puts "#{@chosen_one.parsed_reviews["reviews"][2]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][2]["rating"]} stars."
+                puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
+                complete = true
+            elsif answer == "n" || answer.downcase == "no"
+                puts "Enjoy your meal!"
+                complete = true
+            else
+                puts "Sorry, I don't understand, please respond with y or n"
+            end
         end
     end
   

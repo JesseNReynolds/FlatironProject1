@@ -72,7 +72,7 @@ class Restaurants
     def self.remove_by_types(array_of_restaurants, array_of_types)
         restaurants_to_exclude = []
         array_of_restaurants.each do |restaurant|
-            restaurant.categories.each do |category|
+            restaurant.categories.each do |index_of_array|
                 index_of_array.each do |key, value|
                     if key == "title" && array_of_types.include?(value)
                         restaurants_to_exclude << restaurant
