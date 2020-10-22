@@ -1,6 +1,4 @@
 find a way to get users current location in more elegant way, if I can.
     if I do, give option to enter location manually or pull current
 
-add ability to iterate over more results
-
-refactor recusive prompting methods to use while loop logic
+remove recursion in CLI check_empty

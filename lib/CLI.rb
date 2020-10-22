@@ -3,7 +3,7 @@ require_relative '../environment'
 
 class CLI
     
-    attr_accessor :query, :parsed_data, :latitude, :longitude, :radius, :open_boolean
+    attr_accessor :parsed_data, :latitude, :longitude, :radius, :open_boolean
 
     def start
         self.location_info
@@ -55,9 +55,9 @@ class CLI
     end
 
     def send_and_parse
-        @query = InitialQuery.new(@latitude, @longitude, @radius, @open_boolean)
-        @parsed_data = @query.query_to_hash
-        Restaurants.new_from_json(@parsed_data)
+        puts "I'm fetching data from Yelp now, this might take a few moments!"
+        query = InitialQuery.new(@latitude, @longitude, @radius, @open_boolean)
+        query.query_to_hash
     end
 
     def check_empty(list)
@@ -79,7 +79,7 @@ class CLI
     
     def filter_rating
         complete = false
-    
+
         while complete == false
 
             puts "Do you want to filter by rating? (y/n)"
@@ -196,11 +196,6 @@ class CLI
 
         Restaurants.filter_for_delivery(Restaurants.filtered_by_types, filter_boolean)
     end
-    
-
-
-
-  
     
     def print_random_restaurant
         @chosen_one = Restaurants.filtered_by_transactions.sample

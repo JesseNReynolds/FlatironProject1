@@ -17,10 +17,20 @@ class InitialQuery
     end
 
     def query_to_hash
-        url = "https://api.yelp.com/v3/businesses/search?limit=#{@limit}&category=#{@category}&latitude=#{@latitude}&longitude=#{@longitude}&radius=#{@radius}&open_now=#{@open_boolean}&price=1,2,3,4"
-        raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
-        JSON.parse(raw_query_data)
+        results = 50
+        offset = 0
+        while offset < results && offset <= 999 do
+            # yelp limits total iteratively returned results to 1000
+            url = "https://api.yelp.com/v3/businesses/search?limit=#{@limit}&category=#{@category}&latitude=#{@latitude}&longitude=#{@longitude}&radius=#{@radius}&open_now=#{@open_boolean}&price=1,2,3,4&offset=#{offset}"
+            raw_query_data = HTTP.auth("Bearer #{$APIKEY}").get(url)
+            data = JSON.parse(raw_query_data)
+            results = data["total"]
+            offset += 50
+            Restaurants.new_from_json(data)
+        end
+
     end
+
 
 end
 
