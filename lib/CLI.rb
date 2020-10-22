@@ -51,10 +51,10 @@ class CLI
             puts "Would you like to return restaurants that are closed right now? (y/n)"
             open_only = gets.chomp
             
-            if open_only == "y" ||  open_only.downcase == "yes"
+            if open_only.downcase == "y" ||  open_only.downcase == "yes"
                 @open_boolean = true
                 complete = true
-            elsif open_only == "n" || open_only.downcase == "no"
+            elsif open_only.downcase == "n" || open_only.downcase == "no"
                 @open_boolean = false
                 complete = true
             else
@@ -93,18 +93,18 @@ class CLI
 
             puts "Do you want to filter by rating? (y/n)"
             answer = gets.chomp
-            if answer == "y" || answer.downcase == "yes"
+            if answer.downcase == "y" || answer.downcase == "yes"
                 puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
                 min_rating = gets.chomp.to_f
-
+                complete = true
+# THIS MIGHT BREAK
                 puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
                 max_rating = gets.chomp.to_f
                 if min_rating >= max_rating 
                     puts "Please enter a maximum rating that is higher than your minimum rating."
-                    filter_rating
+                    complete = false
                 end
-                complete = true
-            elsif answer == "n" || answer.downcase == "no"
+            elsif answer.downcase == "n" || answer.downcase == "no"
                 min_rating = 1
                 max_rating = 5
                 complete = true
@@ -123,7 +123,7 @@ class CLI
         while complete == false
             puts "Do you want to filter by price? (y/n)"
             answer = gets.chomp
-            if answer == "y" || answer.downcase == "yes"
+            if answer.downcase == "y" || answer.downcase == "yes"
                 puts "Restaurants are given price ranges from 1 to 4, where 4 is the highest."
                 
                 puts "Please enter a minimum price range from 1 to 4 (decimals NOT OK!)"
@@ -139,7 +139,7 @@ class CLI
                     complete = false
                 end
 
-            elsif answer == "n" || answer.downcase == "no"
+            elsif answer.downcase == "n" || answer.downcase == "no"
                 min_price = 1
                 max_price = 4
                 complete = true
@@ -222,7 +222,7 @@ class CLI
         while complete == false
             puts "Would you like to see three review excerpts? (y/n)"
             answer = gets.chomp
-            if answer == "y" || answer.downcase == "yes"
+            if answer.downcase == "y" || answer.downcase == "yes"
                 @chosen_one.reviews
                 puts "=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--="
                 puts "#{@chosen_one.parsed_reviews["reviews"][0]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][0]["rating"]} stars."
@@ -234,7 +234,7 @@ class CLI
                 puts "#{@chosen_one.parsed_reviews["reviews"][2]["user"]["name"]} gave this restaurant #{@chosen_one.parsed_reviews["reviews"][2]["rating"]} stars."
                 puts "#{@chosen_one.parsed_reviews["reviews"][2]["text"]}"
                 complete = true
-            elsif answer == "n" || answer.downcase == "no"
+            elsif answer.downcase == "n" || answer.downcase == "no"
                 puts "Enjoy your meal!"
                 complete = true
             else
