@@ -97,7 +97,7 @@ class CLI
                 puts "Please enter minimum permissible rating from 1-5 (decimals OK!)"
                 min_rating = gets.chomp.to_f
                 complete = true
-# THIS MIGHT BREAK
+
                 puts "Please enter maximum permissible rating from 1-5 (decimals OK!)"
                 max_rating = gets.chomp.to_f
                 if min_rating >= max_rating 
@@ -114,7 +114,6 @@ class CLI
         end
 
         Restaurants.rating_range(Restaurants.all, min_rating, max_rating)
-        #  Restaurants.rating_range(Restaurants.all, 1, 5)
     end
 
     def filter_price
@@ -149,7 +148,6 @@ class CLI
         end
 
         Restaurants.price_range(Restaurants.filtered_for_rating, min_price, max_price)
-        # Restaurants.price_range(Restaurants.filtered_for_rating, 1, 4)
     end  
 
     def exclude_types
@@ -165,6 +163,7 @@ class CLI
                 # if !restaurant_types.include?category["title"]
                 #     restaurant_types << category["title"]
                 # end
+                # doesn't work, don't know why
             end
         end
 
