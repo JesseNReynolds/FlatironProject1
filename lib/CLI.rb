@@ -51,7 +51,7 @@ class CLI
             puts "Would you like to return restaurants that are closed right now? (y/n)"
             open_only = gets.chomp
             
-            if open_only.downcase == "y" ||  open_only.downcase == "yes"
+            if open_only.downcase == "y" || open_only.downcase == "yes"
                 @open_boolean = true
                 complete = true
             elsif open_only.downcase == "n" || open_only.downcase == "no"
@@ -83,7 +83,7 @@ class CLI
             puts "Collecting info again in 1..."
             sleep 1
             self.start            
-        end
+        end        
     end
     
     def filter_rating
@@ -175,7 +175,7 @@ class CLI
         to_omit = gets.chomp.gsub(/\s+/, "").split(",")
         
         to_omit.each_with_index do |value, index|
-            to_omit[index.to_i] = restaurant_types[value.to_i - 1]
+            to_omit[index] = restaurant_types[value.to_i - 1]
         end
         # this transforms to_omit from an array of ints to an array of titles.
 

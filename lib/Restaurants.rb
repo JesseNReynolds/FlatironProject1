@@ -54,33 +54,26 @@ class Restaurants
     end
 
     def self.rating_range(array, min, max)
-        array.each do |restaurant|
-            if restaurant.rating >= min && restaurant.rating <= max
-                @@filtered_for_rating << restaurant
-            end
+        @@filtered_for_rating = array.select do |restaurant|
+            restaurant.rating >= min && restaurant.rating <= max
         end  
     end
 
     def self.price_range(array, min, max)
-       array.each do |restaurant|
-            if restaurant.price.length <= max && restaurant.price.length >= min
-                @@filtered_for_price << restaurant
-            end
+       @@filtered_for_price = array.select do |restaurant|
+            restaurant.price.length <= max && restaurant.price.length >= min
         end
     end
 
     def self.remove_by_types(array_of_restaurants, array_of_types)
         restaurants_to_exclude = []
         array_of_restaurants.each do |restaurant|
-            restaurant.categories.each do |index_of_array|
-                index_of_array.each do |key, value|
+            restaurant.categories.each do |type|
+                type.each do |key, value|
                     if key == "title" && array_of_types.include?(value)
                         restaurants_to_exclude << restaurant
                     end
                 end
-                # if !restaurants_to_exclude.include?(category["title"])
-                #     restaurants_to_exclude << restaurant
-                # end
             end
         end
         @@filtered_by_types = array_of_restaurants - restaurants_to_exclude 
@@ -88,11 +81,12 @@ class Restaurants
 
     def self.filter_for_delivery(array_of_restaurants, filter_boolean)
         if filter_boolean == true
-            array_of_restaurants.each do |restaurant|
-               if restaurant.transactions.include?("delivery")
-                @@filtered_by_transactions << restaurant
-               end
+
+            @@filtered_by_transactions = array_of_restaurants.select do |restaurant|
+                restaurant.transactions.include?("delivery")
             end
+
+
         else 
             array_of_restaurants.each do |restaurant|
             @@filtered_by_transactions << restaurant
